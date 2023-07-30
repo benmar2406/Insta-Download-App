@@ -6,6 +6,7 @@ from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.common.exceptions import NoSuchElementException
 import time
+import sys
 from docx import Document
 import os
 from io import BytesIO
@@ -63,7 +64,8 @@ jetzt_nicht_button.click()
 
 time.sleep(10)
 
-#get texts and images from posts saved in a specific collection
+#get texts and images from posts saved in a specific collection. 
+# Fortunately the recipe texts are the alt texts of the images and the posts dont need to be opened to extract texts.
 try:
     recipes = driver.find_elements(By.TAG_NAME, "img")
     
@@ -75,14 +77,13 @@ try:
 
 except NoSuchElementException as e:
     print("Element not found:", e)
+    sys.exit(1)
 
 
-print(alt_texts)
 
+#Save recipes from recipes elements in word document
 
-#Save recipes in document
-
-if alt_texts:
+try:
     # store the files
     user_directory = os.path.expanduser(credentials.project_Directory)
     doc_path = os.path.join(user_directory, "rezepte.docx")
@@ -116,9 +117,11 @@ if alt_texts:
         # Insert the image + caption into the document
         doc.add_picture(img_path)
         doc.add_paragraph(alt_text)
-          
 
     doc.save(doc_path)
+
+except Exception as e:
+    print("Error while saving images and texts:", e)
 
 driver.quit()
 
