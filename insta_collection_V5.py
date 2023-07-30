@@ -24,14 +24,14 @@ wait = WebDriverWait(driver, 20)
 
 
 
-# Navigate to insta and log in. Not that the direct link to the specific collection needs to be included
+# Navigate to insta and log in. Note that the direct link to the specific collection needs to be included
 driver.get(credentials.insta_url_to_collection)
 
 privacy_popup = wait.until(
     EC.visibility_of_element_located((By.XPATH, "//button[contains(text(), 'Alle Cookies erlauben')]"))
 )
 
-#Agree to cookies 
+#Agree to cookies
 privacy_popup = driver.find_element(By.XPATH, "//button[contains(text(), 'Alle Cookies erlauben')]")
 privacy_popup.click()
 
@@ -80,7 +80,7 @@ except NoSuchElementException as e:
 print(alt_texts)
 
 
-#Speichere Rezepte in Textdatei wenn Inhalt vorhanden
+#Save recipes in document
 
 if alt_texts:
     # store the files
