@@ -16,7 +16,7 @@ import credentials
 
 
 
-#Initialize Chromedriver and Browser
+# Initialize Chromedriver and Browser
 chromedriver_path = '/usr/local/bin/chromedriver'
 chrome_options = Options()
 chrome_options.add_argument("user-agent=Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/58.0.3029.110 Safari/537.3")
@@ -32,7 +32,7 @@ privacy_popup = wait.until(
     EC.visibility_of_element_located((By.XPATH, "//button[contains(text(), 'Alle Cookies erlauben')]"))
 )
 
-#Agree to cookies
+# Agree to cookies
 privacy_popup = driver.find_element(By.XPATH, "//button[contains(text(), 'Alle Cookies erlauben')]")
 privacy_popup.click()
 
@@ -44,7 +44,7 @@ password_input = wait.until(
     EC.visibility_of_element_located((By.NAME, 'password'))
 )
 
-#enter logindata
+# Enter login data
 username_input = driver.find_element(By.NAME, 'username')
 password_input = driver.find_element(By.NAME, 'password')
 
@@ -56,7 +56,7 @@ password_input.send_keys(password)
 
 password_input.send_keys(Keys.RETURN)
 
-#Don't save login data
+# Don't save login data
 time.sleep(10)
 jetzt_nicht_button = driver.find_element(By.XPATH, "//div[contains(text(), 'Jetzt nicht')]")
 jetzt_nicht_button.click()
@@ -64,7 +64,7 @@ jetzt_nicht_button.click()
 
 time.sleep(10)
 
-#get texts and images from posts saved in a specific collection. 
+# Get texts and images from posts saved in a specific collection. 
 # Fortunately the recipe texts are the alt texts of the images and the posts dont need to be opened to extract texts.
 try:
     recipes = driver.find_elements(By.TAG_NAME, "img")
@@ -84,7 +84,7 @@ except NoSuchElementException as e:
 #Save recipes from recipes elements in word document
 
 try:
-    # store the files
+    # Construct directories 
     user_directory = os.path.expanduser(credentials.project_Directory)
     doc_path = os.path.join(user_directory, "rezepte.docx")
     img_folder = os.path.join(user_directory, "images")
@@ -93,9 +93,9 @@ try:
         os.makedirs(img_folder)
 
     doc = Document()
-
+    # Loop through texts and image urls 
     for i, (alt_text, img_src) in enumerate(zip(alt_texts, img_srcs)):
-        # Download the image
+        # Get the image
         driver.get(img_src)
         image_element = wait.until(EC.presence_of_element_located((By.TAG_NAME, "img")))
         image_url = image_element.get_attribute("src")
@@ -114,7 +114,7 @@ try:
         img_path = os.path.join(img_folder, img_filename)
         image.save(img_path)
 
-        # Insert the image + caption into the document
+        # Insert the image + text into the document
         doc.add_picture(img_path)
         doc.add_paragraph(alt_text)
 
