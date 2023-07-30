@@ -68,6 +68,7 @@ try:
 
 except WebDriverException as e:
     print("Login attempt not successful:", e)
+    driver.quit()
     sys.exit(1)
 
 
@@ -86,6 +87,7 @@ try:
 
 except NoSuchElementException as e:
     print("Element not found:", e)
+    driver.quit()
     sys.exit(1)
 
 
