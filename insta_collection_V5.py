@@ -22,20 +22,21 @@ try:
     chrome_options = Options()
     chrome_options.add_argument("user-agent=Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/58.0.3029.110 Safari/537.3")
     driver = webdriver.Chrome(executable_path=chromedriver_path, options=chrome_options)
+    
+    # define max time to wait for elements  
     wait = WebDriverWait(driver, 20)
 
 
 
-    # Navigate to insta and log in. Note that the direct link to the specific collection needs to be included
+    #Log i process
+
+    # Navigate to your insta insta collection. Note that the direct link to the specific collection needs to be included
     driver.get(credentials.insta_url_to_collection)
 
-    privacy_popup = wait.until(
-        EC.visibility_of_element_located((By.XPATH, "//button[contains(text(), 'Alle Cookies erlauben')]"))
-    )
-
-    # Agree to cookies
-    privacy_popup = driver.find_element(By.XPATH, "//button[contains(text(), 'Alle Cookies erlauben')]")
-    privacy_popup.click()
+    # Now set cookies for the domain
+    cookie = {'name' : 'foo', 'value' : 'bar'}
+    driver.add_cookie(cookie)
+    driver.get_cookies()
 
 
     username_input = wait.until(
@@ -58,7 +59,10 @@ try:
     password_input.send_keys(Keys.RETURN)
 
     # Don't save login data
-    time.sleep(10)
+    jetzt_nicht_button = wait.until(
+        EC.element_to_be_clickable((By.XPATH, "//div[contains(text(), 'Jetzt nicht')]"))
+        )
+
     jetzt_nicht_button = driver.find_element(By.XPATH, "//div[contains(text(), 'Jetzt nicht')]")
     jetzt_nicht_button.click()
 
@@ -67,13 +71,13 @@ except WebDriverException as e:
     sys.exit(1)
 
 
-time.sleep(10)
 
 # Get texts and images from posts saved in a specific collection. 
 # Fortunately the recipe texts are the alt texts of the images and the posts dont need to be opened to extract texts.
+
+time.sleep(10)
+
 try:
-    recipes = driver.find_elements(By.TAG_NAME, "img")
-    
     #texte
     alt_texts = [recipe.get_attribute("alt") for recipe in recipes]
 
@@ -129,8 +133,3 @@ except Exception as e:
     print("Error while saving images and texts:", e)
 
 driver.quit()
-
-
-
-
-
