@@ -4,7 +4,7 @@ from selenium.webdriver.common.by import By
 from selenium.webdriver.common.keys import Keys
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
-from selenium.common.exceptions import NoSuchElementException
+from selenium.common.exceptions import NoSuchElementException, WebDriverException
 import time
 import sys
 from docx import Document
@@ -15,51 +15,56 @@ import urllib.request
 import credentials
 
 
+try: 
 
-# Initialize Chromedriver and Browser
-chromedriver_path = '/usr/local/bin/chromedriver'
-chrome_options = Options()
-chrome_options.add_argument("user-agent=Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/58.0.3029.110 Safari/537.3")
-driver = webdriver.Chrome(executable_path=chromedriver_path, options=chrome_options)
-wait = WebDriverWait(driver, 20)
-
-
-
-# Navigate to insta and log in. Note that the direct link to the specific collection needs to be included
-driver.get(credentials.insta_url_to_collection)
-
-privacy_popup = wait.until(
-    EC.visibility_of_element_located((By.XPATH, "//button[contains(text(), 'Alle Cookies erlauben')]"))
-)
-
-# Agree to cookies
-privacy_popup = driver.find_element(By.XPATH, "//button[contains(text(), 'Alle Cookies erlauben')]")
-privacy_popup.click()
+    # Initialize Chromedriver and Browser
+    chromedriver_path = '/usr/local/bin/chromedriver'
+    chrome_options = Options()
+    chrome_options.add_argument("user-agent=Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/58.0.3029.110 Safari/537.3")
+    driver = webdriver.Chrome(executable_path=chromedriver_path, options=chrome_options)
+    wait = WebDriverWait(driver, 20)
 
 
-username_input = wait.until(
-    EC.visibility_of_element_located((By.NAME, 'username'))
-)
-password_input = wait.until(
-    EC.visibility_of_element_located((By.NAME, 'password'))
-)
 
-# Enter login data
-username_input = driver.find_element(By.NAME, 'username')
-password_input = driver.find_element(By.NAME, 'password')
+    # Navigate to insta and log in. Note that the direct link to the specific collection needs to be included
+    driver.get(credentials.insta_url_to_collection)
 
-username = credentials.insta_username  
-password = credentials.insta_userpassword      
+    privacy_popup = wait.until(
+        EC.visibility_of_element_located((By.XPATH, "//button[contains(text(), 'Alle Cookies erlauben')]"))
+    )
 
-username_input.send_keys(username)
-password_input.send_keys(password)
+    # Agree to cookies
+    privacy_popup = driver.find_element(By.XPATH, "//button[contains(text(), 'Alle Cookies erlauben')]")
+    privacy_popup.click()
 
-password_input.send_keys(Keys.RETURN)
 
-# Don't save login data
-time.sleep(10)
-jetzt_nicht_button = driver.find_element(By.XPATH, "//div[contains(text(), 'Jetzt nicht')]")
-jetzt_nicht_button.click()
+    username_input = wait.until(
+        EC.visibility_of_element_located((By.NAME, 'username'))
+    )
+    password_input = wait.until(
+        EC.visibility_of_element_located((By.NAME, 'password'))
+    )
+
+    # Enter login data
+    username_input = driver.find_element(By.NAME, 'username')
+    password_input = driver.find_element(By.NAME, 'password')
+
+    username = credentials.insta_username  
+    password = credentials.insta_userpassword      
+
+    username_input.send_keys(username)
+    password_input.send_keys(password)
+
+    password_input.send_keys(Keys.RETURN)
+
+    # Don't save login data
+    time.sleep(10)
+    jetzt_nicht_button = driver.find_element(By.XPATH, "//div[contains(text(), 'Jetzt nicht')]")
+    jetzt_nicht_button.click()
+
+except WebDriverException as e:
+    print("Login attempt not successful:", e)
+    sys.exit(1)
 
 
 time.sleep(10)
