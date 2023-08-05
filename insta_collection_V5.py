@@ -28,7 +28,7 @@ try:
 
 
 
-    #Log i process
+    #Log in process
 
     # Navigate to your insta insta collection. Note that the direct link to the specific collection needs to be included
     driver.get(credentials.insta_url_to_collection)
@@ -39,6 +39,7 @@ try:
     driver.get_cookies()
 
 
+    # wait for input fields to be loaded
     username_input = wait.until(
         EC.visibility_of_element_located((By.NAME, 'username'))
     )
@@ -96,7 +97,7 @@ except NoSuchElementException as e:
 
 try:
     # Construct directories 
-    user_directory = os.path.expanduser(credentials.project_Directory)
+    user_directory = os.path.expanduser(credentials.project_directory)
     doc_path = os.path.join(user_directory, "rezepte.docx")
     img_folder = os.path.join(user_directory, "images")
 
